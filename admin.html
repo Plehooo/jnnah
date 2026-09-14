@@ -211,7 +211,7 @@ async function fetchPhotosJson(){
   const raw=decode64(res.content).trim();
   let list=JSON.parse(raw);
   if(!Array.isArray(list)) list=[];
-  list=list.filter(p=>p && typeof p.file==='string' && p.file.trim()).map(p=>({file:p.file.trim(),caption:String(p.caption||'')}));
+  list=list.filter(p=>p && typeof p.file==='string' && p.file.trim()).map(p=>({file:p.file.trim(),caption:String(p.caption||''),date:String(p.date||'')}));
   return {list,sha:res.sha};
 }
 function safe(v){return String(v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;')}
@@ -269,7 +269,8 @@ async function renderGallery(){
       return `<div class="gitem" data-file="${file}">`+
         `<img src="${asset(p.file)}" alt="${safe(p.caption||'Foto '+(i+1))}" loading="lazy" decoding="async">`+
         `<span class="gnum">#${i+1}</span><button class="del" title="Hapus foto">×</button>`+
-        `<div class="gbody"><input class="capinput" data-i="${i}" value="${safe(p.caption||'')}" maxlength="140" placeholder="Tulis caption..."></div></div>`;
+        `<div class="gbody"><input class="capinput" data-i="${i}" value="${safe(p.caption||'')}" maxlength="140" placeholder="Tulis caption...">`+
+        `<input class="dateinput" type="date" data-i="${i}" value="${safe(p.date||'')}" style="margin-top:6px" title="Tanggal momen (buat timeline)"></div></div>`;
     }).join('');
     gal.querySelectorAll('.del').forEach(b=>b.addEventListener('click',onDeletePhoto));
     gal.querySelectorAll('img').forEach(img=>img.addEventListener('error',()=>{
@@ -293,8 +294,9 @@ async function saveAllCaptions(){
   try{
     const {list,sha}=await fetchPhotosJson();
     $('#gallery').querySelectorAll('.capinput').forEach(inp=>{const i=Number(inp.dataset.i);if(list[i])list[i].caption=inp.value.trim()});
-    await ghPut('photos.json',b64(JSON.stringify(list,null,2)+'\n'),'Update caption foto',sha);
-    status.textContent='✓ Caption tersimpan.';await renderGallery();
+    $('#gallery').querySelectorAll('.dateinput').forEach(inp=>{const i=Number(inp.dataset.i);if(list[i])list[i].date=inp.value.trim()});
+    await ghPut('photos.json',b64(JSON.stringify(list,null,2)+'\n'),'Update caption & tanggal foto',sha);
+    status.textContent='✓ Caption & tanggal tersimpan.';await renderGallery();
   }catch(e){status.textContent='✗ Gagal simpan caption: '+e.message}
 }
 $('#saveCaptions').addEventListener('click',saveAllCaptions);
@@ -309,10 +311,11 @@ function updateQueueUI(){
 }
 function addFiles(fileList){
   const files=[...fileList].filter(f=>f && f.type.startsWith('image/'));
+  const todayISO=new Date().toISOString().slice(0,10);
   files.forEach(file=>{
     if(file.size>12*1024*1024)return;
     if(queue.some(x=>x.file.name===file.name && x.file.size===file.size && x.file.lastModified===file.lastModified))return;
-    queue.push({file,caption:''});
+    queue.push({file,caption:'',date:todayISO});
   });
   renderThumbs();
 }
@@ -327,7 +330,8 @@ function renderThumbs(){
     const close=document.createElement('button');close.className='rm';close.textContent='×';close.type='button';close.title='Hapus dari antrean';close.addEventListener('click',()=>{queue.splice(i,1);renderThumbs()});
     const body=document.createElement('div');body.className='thumb-body';
     const input=document.createElement('input');input.placeholder='Caption (opsional)';input.maxLength=140;input.value=item.caption;input.addEventListener('input',()=>item.caption=input.value);
-    body.appendChild(input);card.append(img,close,body);el.appendChild(card);
+    const dateInput=document.createElement('input');dateInput.type='date';dateInput.value=item.date||'';dateInput.style.marginTop='6px';dateInput.title='Tanggal momen (buat timeline)';dateInput.addEventListener('input',()=>item.date=dateInput.value);
+    body.append(input,dateInput);card.append(img,close,body);el.appendChild(card);
   });
   updateQueueUI();
 }
@@ -353,7 +357,7 @@ $('#uploadBtn').addEventListener('click',async()=>{
       const filename=`${Date.now()}-${crypto.randomUUID?crypto.randomUUID().slice(0,8):Math.random().toString(36).slice(2,10)}-${slug(item.file.name)}${ext}`;
       logLine(`Mengunggah ${item.file.name} …`);
       await ghPut('photos/'+filename,await fileToBase64(item.file),`Tambah foto ${filename}`);
-      uploaded.push(filename);list.push({file:filename,caption:item.caption.trim()});logLine(`✓ ${item.file.name}`,'ok');
+      uploaded.push(filename);list.push({file:filename,caption:item.caption.trim(),date:item.date||''});logLine(`✓ ${item.file.name}`,'ok');
     }
     await ghPut('photos.json',b64(JSON.stringify(list,null,2)+'\n'),`Update photos.json (+${batch.length} foto)`,sha);
     logLine('✓ Semua foto masuk ke galeri. Pages akan deploy otomatis.','ok');

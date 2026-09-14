@@ -184,6 +184,24 @@ section{padding:96px 0;position:relative}
 .gallery-ribbon .left{display:flex;align-items:center;gap:10px;color:var(--ink-soft);font-size:.78rem;letter-spacing:.08em;text-transform:uppercase}
 .gallery-ribbon .spark{width:8px;height:8px;border-radius:50%;background:var(--rose);box-shadow:0 0 0 5px rgba(179,80,111,.12),0 0 18px rgba(179,80,111,.28)}
 .gallery-count{display:inline-flex;align-items:center;gap:7px;padding:8px 12px;border-radius:999px;background:#fffaf7;border:1px solid rgba(58,37,48,.1);font-family:'Caveat',cursive;font-size:1rem;color:var(--rose-deep);white-space:nowrap}
+.view-toggle{display:inline-flex;padding:4px;border-radius:999px;background:rgba(58,37,48,.06);border:1px solid rgba(58,37,48,.1)}
+.view-btn{padding:7px 14px;border-radius:999px;font-size:.74rem;color:var(--ink-soft);transition:.25s;letter-spacing:.02em;white-space:nowrap}
+.view-btn.active{background:#fff;color:var(--rose-deep);box-shadow:0 4px 10px -4px rgba(58,25,35,.35);font-weight:600}
+.timeline{position:relative;max-width:760px;margin:0 auto;padding:10px 0 6px 4px}
+.timeline:before{content:"";position:absolute;left:19px;top:6px;bottom:6px;width:1px;background:repeating-linear-gradient(0deg,var(--line) 0 6px,transparent 6px 12px)}
+.timeline-group{position:relative;padding-left:48px;margin-bottom:40px}
+.timeline-group:last-child{margin-bottom:0}
+.timeline-group:before{content:"";position:absolute;left:14px;top:4px;width:11px;height:11px;border-radius:50%;background:var(--rose);box-shadow:0 0 0 4px var(--paper)}
+.timeline-date{font-family:'Caveat',cursive;color:var(--rose-deep);font-size:1.3rem;margin-bottom:14px}
+.timeline-items{display:grid;grid-template-columns:repeat(auto-fill,minmax(128px,1fr));gap:16px}
+.timeline-items .pol{padding:8px 8px 30px}
+.timeline-items .pol .cap{font-size:.88rem;bottom:8px}
+@media(max-width:560px){
+  .timeline-group{padding-left:38px;margin-bottom:30px}
+  .timeline-group:before{left:10px}
+  .timeline:before{left:15px}
+  .timeline-items{grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:10px}
+}
 .board{position:relative;padding:34px 22px 42px;border:1px solid rgba(58,37,48,.12);border-radius:28px;background:
   radial-gradient(circle at 12% 18%,rgba(179,80,111,.12) 0 2px,transparent 3px),
   radial-gradient(circle at 82% 75%,rgba(175,128,56,.14) 0 2px,transparent 3px),
@@ -277,12 +295,20 @@ input[type=range]{width:100%;accent-color:var(--rose);height:2px}
 .toast.show{transform:translate(-50%,0);opacity:1}
 dialog{border:0;padding:0;background:transparent;max-width:none}
 dialog::backdrop{background:rgba(40,24,30,.5);backdrop-filter:blur(4px)}
-.letter{width:min(600px,calc(100vw - 32px));padding:38px 34px;border-radius:8px;background:linear-gradient(180deg,#fffaf3,#fbf2e6);box-shadow:var(--shadow);position:relative}
+.letter-shell{width:min(600px,calc(100vw - 32px));border-radius:8px;background:linear-gradient(180deg,#fffaf3,#fbf2e6);box-shadow:var(--shadow);position:relative;overflow:hidden}
+.letter-shell:before{content:"";position:absolute;inset:10px;border:1px solid var(--line-soft);border-radius:4px;pointer-events:none;z-index:0}
+.letter-track{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;position:relative;z-index:1}
+.letter-track::-webkit-scrollbar{display:none}
+.letter{flex:0 0 100%;width:100%;box-sizing:border-box;padding:38px 34px;scroll-snap-align:center}
 .letter .kicker{font-family:'Caveat',cursive;color:var(--rose-deep);font-size:1.25rem}
 .letter h2{margin:6px 0 16px;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(2rem,6vw,2.8rem);font-weight:500}
 .letter p{color:var(--ink-soft);line-height:1.85;font-size:.98rem}
 .letter .sign{margin-top:20px;font-family:'Caveat',cursive;font-size:1.3rem;color:var(--rose-deep)}
-.letter-actions{display:flex;justify-content:flex-end;margin-top:24px}
+.letter-nav{position:relative;z-index:1;display:flex;align-items:center;justify-content:center;gap:14px;padding:0 34px 4px}
+.letter-dots{display:flex;gap:7px}
+.letter-dots span{width:7px;height:7px;border-radius:50%;background:rgba(58,37,48,.22);transition:.25s;cursor:pointer}
+.letter-dots span.active{background:var(--rose);width:20px;border-radius:4px}
+.letter-actions{position:relative;z-index:1;display:flex;justify-content:center;padding:18px 34px 30px}
 
 footer{padding:70px 0 90px;text-align:center}
 footer .brand-big{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(2.2rem,5.5vw,3.6rem);font-weight:500}
@@ -413,10 +439,20 @@ footer .sign{margin-top:12px;font-family:'Caveat',cursive;color:var(--ink-soft);
       <h2 class="serif">Momen yang tidak<br>ingin <em>disimpan diam-diam.</em></h2>
       <p>Ditata seperti scrapbook sungguhan — hangat, sedikit berantakan, dan tiap foto punya ruangnya sendiri. Klik salah satu untuk melihatnya lebih besar.</p>
     </div>
-    <div class="gallery-ribbon reveal"><div class="left"><span class="spark"></span><span>our little archive</span></div><div class="gallery-count" id="galleryCount">0 foto</div></div>
-    <div class="board reveal">
+    <div class="gallery-ribbon reveal">
+      <div class="left"><span class="spark"></span><span>our little archive</span></div>
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <div class="view-toggle" id="viewToggle">
+          <button class="view-btn active" id="viewBoard" type="button">Papan</button>
+          <button class="view-btn" id="viewTimeline" type="button">Garis waktu</button>
+        </div>
+        <div class="gallery-count" id="galleryCount">0 foto</div>
+      </div>
+    </div>
+    <div class="board reveal" id="boardWrap">
       <div class="scatter" id="scatter"></div>
     </div>
+    <div class="timeline reveal" id="timelineWrap" style="display:none"></div>
   </div>
 </section>
 
@@ -526,11 +562,32 @@ footer .sign{margin-top:12px;font-family:'Caveat',cursive;color:var(--ink-soft);
 <div class="toast" id="toast"></div>
 
 <dialog id="messageDialog">
-  <div class="letter">
-    <div class="kicker hand">sepucuk pesan kecil</div>
-    <h2 class="serif">Untuk Jannah,</h2>
-    <p>Semoga setiap foto di sini bisa jadi tempat kecil untuk mengingat hal-hal baik. Tidak harus sempurna, tidak harus panjang — cukup punya arti setiap kali dibuka lagi.</p>
-    <div class="sign hand">— Aditiya</div>
+  <div class="letter-shell">
+    <div class="letter-track" id="letterTrack">
+      <div class="letter">
+        <div class="kicker hand">sepucuk pesan kecil · 1/3</div>
+        <h2 class="serif">Untuk Jannah,</h2>
+        <p>Semoga setiap foto di sini bisa jadi tempat kecil untuk mengingat hal-hal baik. Tidak harus sempurna, tidak harus panjang — cukup punya arti setiap kali dibuka lagi.</p>
+        <div class="sign hand">— Aditiya</div>
+      </div>
+      <div class="letter">
+        <div class="kicker hand">sepucuk pesan kecil · 2/3</div>
+        <h2 class="serif">Terima kasih,</h2>
+        <p>Untuk semua hari biasa yang kamu bikin terasa nggak biasa-biasa amat. Untuk sabarnya, untuk maafnya, untuk tetap tinggal walau kadang susah. Ini halaman kecil, tapi rasa terima kasihnya nggak kecil sama sekali.</p>
+        <div class="sign hand">— Aditiya</div>
+      </div>
+      <div class="letter">
+        <div class="kicker hand">sepucuk pesan kecil · 3/3</div>
+        <h2 class="serif">Untuk nanti,</h2>
+        <p>Halaman ini akan terus ditambah — foto baru, lagu baru, cerita baru. Kalau suatu hari dibaca ulang, semoga masih terasa sama hangatnya seperti sekarang ditulis.</p>
+        <div class="sign hand">— Aditiya</div>
+      </div>
+    </div>
+    <div class="letter-nav">
+      <button class="iconbtn" id="prevLetter" aria-label="Pesan sebelumnya">←</button>
+      <div class="letter-dots" id="letterDots"></div>
+      <button class="iconbtn" id="nextLetter" aria-label="Pesan berikutnya">→</button>
+    </div>
     <div class="letter-actions"><button class="btn primary" id="closeMessage">Tutup pesan</button></div>
   </div>
 </dialog>
@@ -543,12 +600,42 @@ const topbar=$('#topbar');
 addEventListener('scroll',()=>topbar.classList.toggle('scrolled',scrollY>10),{passive:true});
 
 const gate=$('#gate');
+function confettiBlast(n=70){
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const layer=document.createElement('div');
+  layer.style.cssText='position:fixed;inset:0;z-index:550;pointer-events:none;overflow:hidden';
+  document.body.appendChild(layer);
+  const colors=['#b3506f','#e9c6cf','#af8038','#7c8a6b','#fdf1f0'];
+  for(let i=0;i<n;i++){
+    const el=document.createElement('span');
+    const isHeart=Math.random()<.2;
+    const size=isHeart?(14+Math.random()*14):(6+Math.random()*8);
+    const color=colors[Math.floor(Math.random()*colors.length)];
+    if(isHeart){
+      el.textContent=['♥','♡'][Math.floor(Math.random()*2)];
+      el.style.cssText=`position:absolute;left:${Math.random()*100}%;top:-8vh;font-size:${size}px;color:${color}`;
+    }else{
+      el.style.cssText=`position:absolute;left:${Math.random()*100}%;top:-8vh;width:${size}px;height:${size*.55}px;background:${color};border-radius:${Math.random()<.5?'2px':'50%'}`;
+    }
+    const drift=(Math.random()*2-1)*140;
+    const rot=(Math.random()*2-1)*360;
+    el.animate(
+      [{transform:'translate(0,0) rotate(0deg)',opacity:1},
+       {transform:`translate(${drift*.6}px,60vh) rotate(${rot*.6}deg)`,opacity:1,offset:.7},
+       {transform:`translate(${drift}px,108vh) rotate(${rot}deg)`,opacity:.85}],
+      {duration:3200+Math.random()*1800,delay:Math.random()*350,easing:'cubic-bezier(.25,.46,.45,.94)',fill:'forwards'}
+    );
+    layer.appendChild(el);
+  }
+  setTimeout(()=>layer.remove(),5600);
+}
 $('#enter').addEventListener('click',()=>{
   document.body.classList.remove('locked');
   gate.classList.add('hide');
   // Siapkan track pertama saja. Audio TIDAK autoplay.
   if(window.LOVE_SONGS?.length && !LOVE_SONGS[0].src.includes('PASTE-')) loadSong(0,false);
   try{localStorage.setItem('jnnah_gate_opened','1')}catch(e){}
+  confettiBlast();
 });
 
 /* jaring pengaman: kalau tandanya sudah ada tapi karena suatu hal gate masih kebuka,
@@ -617,6 +704,62 @@ function esc(v=''){
 }
 function assetPath(file){ return 'photos/'+String(file).split('/').map(encodeURIComponent).join('/'); }
 
+/* garis waktu: kelompokkan foto per tanggal (dari field "date" di photos.json,
+   atau kalau tidak ada, dari nama file yang diawali angka waktu unggah) */
+function photoDate(p){
+  if(p && p.date){
+    const d=new Date(p.date);
+    if(!isNaN(d)) return d;
+  }
+  const m=p && String(p.file||'').match(/^(\d{10,13})-/);
+  if(m){
+    let ts=Number(m[1]);
+    if(m[1].length===10) ts*=1000;
+    const d=new Date(ts);
+    if(!isNaN(d)) return d;
+  }
+  return null;
+}
+function fmtTimelineDate(d){
+  const bulan=['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+  return `${d.getDate()} ${bulan[d.getMonth()]} ${d.getFullYear()}`;
+}
+function timelinePhotoCard(p,i){
+  const cap=esc(p.caption||'');
+  const alt=esc(p.caption||`Foto galeri ${i+1}`);
+  const src=assetPath(p.file);
+  return `<div class="photo" data-src="${esc(src)}" data-alt="${alt}"><div class="pol"><span class="pin"></span><img src="${esc(src)}" alt="${alt}" loading="lazy" decoding="async"><div class="cap">${cap||'momen kecil'}</div></div></div>`;
+}
+function buildTimeline(items){
+  const withDate=[],without=[];
+  items.forEach((p,i)=>{const d=photoDate(p);if(d)withDate.push({p,i,d});else without.push({p,i})});
+  withDate.sort((a,b)=>a.d-b.d);
+  const groups=[];
+  withDate.forEach(entry=>{
+    const key=entry.d.toDateString();
+    let g=groups.find(g=>g.key===key);
+    if(!g){g={key,date:entry.d,entries:[]};groups.push(g)}
+    g.entries.push(entry);
+  });
+  let html=groups.map(g=>{
+    const items2=g.entries.map(({p,i})=>timelinePhotoCard(p,i)).join('');
+    return `<div class="timeline-group"><div class="timeline-date hand">${fmtTimelineDate(g.date)}</div><div class="timeline-items">${items2}</div></div>`;
+  }).join('');
+  if(without.length){
+    const items2=without.map(({p,i})=>timelinePhotoCard(p,i)).join('');
+    html+=`<div class="timeline-group"><div class="timeline-date hand">Kenangan lainnya</div><div class="timeline-items">${items2}</div></div>`;
+  }
+  return html || '<div class="gallery-empty"><strong>Belum ada tanggal.</strong><span>Timeline akan terisi begitu foto punya info tanggal.</span></div>';
+}
+$('#viewBoard').addEventListener('click',()=>{
+  $('#viewBoard').classList.add('active');$('#viewTimeline').classList.remove('active');
+  $('#boardWrap').style.display='';$('#timelineWrap').style.display='none';
+});
+$('#viewTimeline').addEventListener('click',()=>{
+  $('#viewTimeline').classList.add('active');$('#viewBoard').classList.remove('active');
+  $('#boardWrap').style.display='none';$('#timelineWrap').style.display='';
+});
+
 fetch('photos.json', {cache:'no-store'}).then(r=>{
   if(!r.ok) throw new Error('photos.json tidak bisa dibaca');
   return r.json();
@@ -628,6 +771,7 @@ fetch('photos.json', {cache:'no-store'}).then(r=>{
 
   if(items.length===0){
     scatter.innerHTML='<div class="gallery-empty"><strong>Album masih kosong.</strong><span>Tambahkan foto lewat halaman admin, lalu koleksi ini akan muncul otomatis di sini.</span></div>';
+    $('#timelineWrap').innerHTML='<div class="gallery-empty"><strong>Album masih kosong.</strong><span>Tambahkan foto lewat halaman admin, lalu koleksi ini akan muncul otomatis di sini.</span></div>';
   }else{
     scatter.innerHTML=items.map((p,i)=>{
       const cap=esc(p.caption||'');
@@ -636,6 +780,7 @@ fetch('photos.json', {cache:'no-store'}).then(r=>{
       return `<div class="photo" data-src="${esc(src)}" data-alt="${alt}">`+
         `<div class="pol"><span class="pin"></span><img src="${esc(src)}" alt="${alt}" loading="${i<2?'eager':'lazy'}" decoding="async"><div class="cap">${cap || 'momen kecil'}</div></div></div>`;
     }).join('');
+    $('#timelineWrap').innerHTML=buildTimeline(items);
     bindPhotoClicks();
     scatter.querySelectorAll('img').forEach(img=>img.addEventListener('error',()=>{
       const card=img.closest('.photo');
@@ -666,7 +811,31 @@ $('#closeLightbox').addEventListener('click',closeLight);
 $('#lightbox').addEventListener('click',e=>{if(e.target.id==='lightbox')closeLight()});
 
 const dialog=$('#messageDialog');
-$('#message').addEventListener('click',()=>dialog.showModal());
+const letterTrack=$('#letterTrack');
+const letterPages=$$('#letterTrack .letter');
+const letterDotsEl=$('#letterDots');
+letterPages.forEach((_,i)=>{
+  const d=document.createElement('span');
+  if(i===0) d.classList.add('active');
+  d.addEventListener('click',()=>scrollToLetter(i));
+  letterDotsEl.appendChild(d);
+});
+function scrollToLetter(i){
+  const page=letterPages[i];
+  if(page) letterTrack.scrollTo({left:page.offsetLeft,behavior:'smooth'});
+}
+function currentLetterIndex(){
+  const w=letterTrack.clientWidth||1;
+  return Math.round(letterTrack.scrollLeft/w);
+}
+function updateLetterDots(){
+  const idx=Math.min(letterPages.length-1,Math.max(0,currentLetterIndex()));
+  [...letterDotsEl.children].forEach((d,i)=>d.classList.toggle('active',i===idx));
+}
+letterTrack.addEventListener('scroll',()=>{clearTimeout(letterTrack._t);letterTrack._t=setTimeout(updateLetterDots,80)},{passive:true});
+$('#prevLetter').addEventListener('click',()=>scrollToLetter(Math.max(0,currentLetterIndex()-1)));
+$('#nextLetter').addEventListener('click',()=>scrollToLetter(Math.min(letterPages.length-1,currentLetterIndex()+1)));
+$('#message').addEventListener('click',()=>{dialog.showModal();letterTrack.scrollTo({left:0});updateLetterDots()});
 $('#closeMessage').addEventListener('click',()=>dialog.close());
 
 const quotes=[
