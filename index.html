@@ -103,9 +103,9 @@ section{padding:96px 0;position:relative}
 .section-head p{color:var(--ink-soft);line-height:1.7;font-size:.98rem}
 
 .board{position:relative;padding:20px 0 10px}
-.scatter{display:grid;grid-template-columns:repeat(12,1fr);gap:22px 18px}
-.scatter .photo{grid-column:span 4;position:relative;cursor:pointer}
-.pol{background:#fffaf4;padding:10px 10px 38px;box-shadow:var(--shadow-soft);transition:transform .35s ease,box-shadow .35s ease;position:relative}
+.scatter{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:28px 22px;align-items:start}
+.scatter .photo{position:relative;cursor:pointer;min-width:0}
+.pol{background:#fffaf4;padding:10px 10px 42px;box-shadow:var(--shadow-soft);transition:transform .35s ease,box-shadow .35s ease;position:relative}
 .photo:hover .pol{transform:translateY(-6px) rotate(0deg) scale(1.02);box-shadow:var(--shadow);z-index:5}
 .pol img{width:100%;aspect-ratio:4/5;object-fit:cover;display:block}
 .pol .cap{position:absolute;bottom:10px;left:14px;right:14px;font-family:'Caveat',cursive;font-size:1.05rem;color:var(--ink-soft)}
@@ -199,11 +199,13 @@ footer .sign{margin-top:12px;font-family:'Caveat',cursive;color:var(--ink-soft);
   .hero-grid,.story,.music-wrap{grid-template-columns:1fr}
   .hero-grid{gap:48px}
   .polaroid-wrap{order:-1;max-width:280px}
-  .scatter .photo{grid-column:span 12 !important;margin-top:0 !important;transform:none !important}
+  .scatter{grid-template-columns:repeat(2,minmax(0,1fr));gap:22px 16px}
+  .scatter .photo{margin-top:0 !important;transform:none !important}
   .details{grid-template-columns:1fr}
   .vinyl-stage{margin-bottom:8px}
 }
 @media(max-width:560px){
+  .scatter{grid-template-columns:1fr;gap:18px}
   section{padding:66px 0}
   .hero{padding-top:120px}
   .letter{padding:28px 22px}
@@ -253,7 +255,7 @@ footer .sign{margin-top:12px;font-family:'Caveat',cursive;color:var(--ink-soft);
     <div class="reveal">
       <div class="kicker serif">halaman pertama</div>
       <h1 class="serif">Untuk setiap<br>hal kecil yang<br><em>terasa besar.</em></h1>
-      <p class="hero-copy">Bukan halaman besar dengan banyak kejutan. Cuma tempat sederhana untuk menyimpan lima foto, beberapa baris cerita, dan lagu yang bisa diganti kapan saja lewat <code>music.js</code> — supaya bisa terus bertambah seiring waktu.</p>
+      <p class="hero-copy">Bukan halaman besar dengan banyak kejutan. Cuma tempat sederhana untuk menyimpan foto, beberapa baris cerita, dan lagu yang bisa diganti kapan saja lewat <code>music.js</code> — supaya albumnya bisa terus bertambah seiring waktu.</p>
       <div class="hero-actions">
         <a class="btn primary" href="#gallery">Lihat fotonya</a>
         <button class="btn" id="wordBtnHero">Baca satu kata</button>
@@ -434,29 +436,17 @@ function burst(n=16){
 $('#heart').addEventListener('click',()=>burst(20));
 
 function bindPhotoClicks(){
-  $$('.photo').forEach(el=>el.addEventListener('click',()=>{$('#lightboxImg').src=el.dataset.full;$('#lightbox').classList.add('open')}));
+  $$('.photo').forEach(el=>el.addEventListener('click',()=>{$('#lightboxImg').src=el.querySelector('img')?.src||'';$('#lightbox').classList.add('open')}));
 }
 
-/* Galeri: tambahin foto cukup lewat photos.json + taruh filenya di folder photos/, tidak perlu edit HTML/CSS.
-   Posisi & rotasi tiap foto dibuat otomatis (pola diulang tiap 6 foto) supaya layout "papan gabus" tetap
-   rapi-berantakan meskipun jumlah fotonya nambah. */
-const scatterLayout=[
-  {col:'1/6',rot:-3,mt:0},
-  {col:'6/9',rot:2.5,mt:38},
-  {col:'9/13',rot:-1.5,mt:0},
-  {col:'1/5',rot:2,mt:6},
-  {col:'5/9',rot:-2.5,mt:-20},
-  {col:'9/13',rot:3,mt:16}
-];
-
+/* Galeri dinamis: berapa pun jumlah fotonya, layout tetap rapi dan responsif. */
 fetch('photos.json').then(r=>r.json()).then(list=>{
   const scatter=$('#scatter');
   scatter.innerHTML=list.map((p,i)=>{
-    const L=scatterLayout[i%scatterLayout.length];
-    const cap=(p.caption||'').replace(/</g,'&lt;');
-    const alt=cap||'Aditiya dan Jannah';
-    return `<div class="photo" data-full="photos/${p.file}" style="grid-column:${L.col};transform:rotate(${L.rot}deg);margin-top:${L.mt}px">`
-      +`<div class="pol"><span class="pin"></span><img src="photos/${p.file}" alt="${alt}" loading="${i<2?'eager':'lazy'}"><div class="cap">${cap}</div></div></div>`;
+    const cap=(p.caption||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    const alt=cap||'Foto galeri';
+    return `<div class="photo">`+
+      `<div class="pol"><span class="pin"></span><img src="photos/${encodeURIComponent(p.file)}" alt="${alt}" loading="${i<3?'eager':'lazy'}"><div class="cap">${cap}</div></div></div>`;
   }).join('');
   bindPhotoClicks();
 }).catch(()=>bindPhotoClicks());

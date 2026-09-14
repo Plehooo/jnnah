@@ -62,3 +62,7 @@ Setelah file ini di-push ke branch `main`:
 
 Workflow memakai `actions/configure-pages`, `actions/upload-pages-artifact`, dan `actions/deploy-pages` sesuai alur GitHub Pages untuk custom workflow.
 
+
+
+## Galeri dinamis
+Foto dapat ditambah sebanyak yang diperlukan melalui `admin.html`. Caption foto lama juga bisa diedit, dan setiap foto bisa dihapus dari admin. Layout galeri otomatis responsif untuk jumlah foto yang terus bertambah.

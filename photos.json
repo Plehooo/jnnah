@@ -1,22 +1,7 @@
 [
-  {
-    "file": "01.jpg",
-    "caption": "bersama"
-  },
-  {
-    "file": "05.jpg",
-    "caption": "bab favorit"
-  },
-  {
-    "file": "1789389831819-1000699749.jpg",
-    "caption": "foto kita blurr"
-  },
-  {
-    "file": "1789390197082-1000696413.jpg",
-    "caption": "bucin"
-  },
-  {
-    "file": "1789390199288-1000660904.jpg",
-    "caption": "ekhem"
-  }
+  {"file":"01.jpg","caption":"bersama"},
+  {"file":"02.jpg","caption":"momen kecil"},
+  {"file":"03.jpg","caption":"senyum ini"},
+  {"file":"04.jpg","caption":"hari itu"},
+  {"file":"05.jpg","caption":"bab favorit"}
 ]

@@ -53,6 +53,11 @@ summary{cursor:pointer;font-size:.85rem;color:var(--rose-deep);user-select:none}
 .gitem{position:relative;border-radius:6px;overflow:hidden;border:1px solid var(--line-soft);aspect-ratio:4/5;background:#eee}
 .gitem img{width:100%;height:100%;object-fit:cover;display:block}
 .gitem .cap{position:absolute;left:0;right:0;bottom:0;background:rgba(40,24,30,.55);color:#fff;font-size:.65rem;padding:3px 6px;line-height:1.3}
+.gitem .capinput{position:absolute;left:5px;right:5px;bottom:5px;width:calc(100% - 10px);border:0;border-radius:5px;padding:5px 6px;background:rgba(255,255,255,.94);color:var(--ink);font-size:.68rem;z-index:2}
+.gitem .caplabel{position:absolute;left:7px;top:6px;background:rgba(40,24,30,.62);color:#fff;padding:2px 6px;border-radius:99px;font-size:.58rem;z-index:2}
+.gallery{grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:12px}
+.gitem{aspect-ratio:4/5}
+
 .gitem .del{position:absolute;top:4px;right:4px;width:20px;height:20px;border-radius:50%;background:rgba(179,56,79,.85);color:#fff;border:0;font-size:.75rem;cursor:pointer}
 .status{font-size:.8rem;color:var(--ink-soft);margin-top:8px}
 </style>
@@ -99,7 +104,7 @@ summary{cursor:pointer;font-size:.85rem;color:var(--rose-deep);user-select:none}
 
   <div class="card">
     <h2>Tambah foto</h2>
-    <div class="drop" id="drop">Klik atau seret foto ke sini (bisa lebih dari satu)</div>
+    <div class="drop" id="drop">Klik atau seret foto ke sini — bisa puluhan foto sekaligus</div>
     <input type="file" id="fileInput" accept="image/*" multiple hidden>
     <div class="thumbs" id="thumbs"></div>
     <div class="actions">
@@ -112,6 +117,10 @@ summary{cursor:pointer;font-size:.85rem;color:var(--rose-deep);user-select:none}
     <h2>Foto yang sudah ada</h2>
     <div class="status" id="galleryStatus">Isi pengaturan repo di atas dulu, lalu klik "Tes koneksi".</div>
     <div class="gallery" id="gallery"></div>
+    <div class="actions" id="galleryActions" style="display:none">
+      <button class="btn" id="saveCaptions">Simpan semua caption</button>
+    </div>
+    <div class="status" id="captionStatus"></div>
   </div>
 </div>
 
@@ -179,22 +188,38 @@ async function fetchPhotosJson(){
 }
 
 async function renderGallery(){
-  const galEl=$('#gallery'),statusEl=$('#galleryStatus');
+  const galEl=$('#gallery'),statusEl=$('#galleryStatus'),actions=$('#galleryActions');
   try{
     const {list}=await fetchPhotosJson();
-    statusEl.textContent=`${list.length} foto di galeri.`;
-    galEl.innerHTML=list.map((p,i)=>`
-      <div class="gitem" data-file="${p.file}" data-idx="${i}">
-        <img src="photos/${p.file}" loading="lazy">
-        <div class="cap">${(p.caption||'').replace(/</g,'&lt;')}</div>
-        <button class="del" title="Hapus">×</button>
-      </div>`).join('');
+    statusEl.textContent=`${list.length} foto di galeri — bisa terus ditambah tanpa batas jumlah dari sisi halaman.`;
+    actions.style.display=list.length?'flex':'none';
+    galEl.innerHTML=list.map((p,i)=>{
+      const safeFile=String(p.file).replace(/\\/g,'/').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+      return `<div class="gitem" data-file="${safeFile}" data-idx="${i}">`+
+        `<img src="photos/${encodeURIComponent(p.file)}" loading="lazy" onerror="this.style.opacity=.35">`+
+        `<div class="caplabel">#${i+1}</div>`+
+        `<input class="capinput" data-i="${i}" value="${(p.caption||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;')}" placeholder="Tulis caption..." maxlength="140">`+
+        `<button class="del" title="Hapus foto">×</button></div>`;
+    }).join('');
     galEl.querySelectorAll('.del').forEach(btn=>btn.addEventListener('click',onDeletePhoto));
   }catch(e){
     statusEl.textContent='Belum konek: '+e.message;
-    galEl.innerHTML='';
+    galEl.innerHTML=''; actions.style.display='none';
   }
 }
+
+async function saveAllCaptions(){
+  const status=$('#captionStatus');
+  try{
+    const {list,sha}=await fetchPhotosJson();
+    const inputs=[...$('#gallery').querySelectorAll('.capinput')];
+    inputs.forEach(inp=>{ const i=Number(inp.dataset.i); if(list[i]) list[i].caption=inp.value.trim(); });
+    await ghPut('photos.json',b64FromUnicode(JSON.stringify(list,null,2)+'\n'),'Update caption foto',sha);
+    status.textContent='✓ Semua caption tersimpan. Pages akan deploy ulang otomatis.';
+    renderGallery();
+  }catch(e){ status.textContent='✗ Gagal simpan caption: '+e.message; }
+}
+$('#saveCaptions').addEventListener('click',saveAllCaptions);
 
 $('#testConn').addEventListener('click',async()=>{
   saveSettings();
@@ -210,20 +235,24 @@ $('#testConn').addEventListener('click',async()=>{
 
 async function onDeletePhoto(e){
   const item=e.target.closest('.gitem');
-  const file=item.dataset.file, idx=Number(item.dataset.idx);
+  const file=item.dataset.file;
   if(!confirm(`Hapus foto "${file}" dari galeri?`)) return;
   e.target.disabled=true;
   try{
     const {list,sha}=await fetchPhotosJson();
+    const idx=list.findIndex(p=>p.file===file);
+    if(idx<0) throw new Error('Foto sudah tidak ada di photos.json');
     const newList=list.filter((_,i)=>i!==idx);
-    await ghPut('photos.json',b64FromUnicode(JSON.stringify(newList,null,2)+'\n'),`Hapus foto ${file} dari galeri`,sha);
+    await ghPut('photos.json',b64FromUnicode(JSON.stringify(newList,null,2)+'\\n'),`Hapus foto ${file} dari galeri`,sha);
     try{
       const imgMeta=await ghGet('photos/'+file);
       await ghDelete('photos/'+file,`Hapus file foto ${file}`,imgMeta.sha);
-    }catch(err){ /* file foto mungkin sudah tidak ada, json tetap sudah bersih */ }
-    renderGallery();
+    }catch(err){ console.warn('File gambar tidak ditemukan:',err); }
+    await renderGallery();
+    $('#captionStatus').textContent=`✓ ${file} dihapus.`;
   }catch(err){
     alert('Gagal hapus: '+err.message);
+    e.target.disabled=false;
   }
 }
 
@@ -289,7 +318,7 @@ uploadBtn.addEventListener('click',async()=>{
     let {list,sha}=await fetchPhotosJson();
     for(const item of queue){
       const ext=(item.file.name.match(/\.[a-zA-Z0-9]+$/)||['.jpg'])[0].toLowerCase();
-      const filename=`${Date.now()}-${slug(item.file.name)||'foto'}${ext}`;
+      const filename=`${Date.now()}-${crypto.randomUUID ? crypto.randomUUID().slice(0,8) : Math.random().toString(36).slice(2,10)}-${slug(item.file.name)||'foto'}${ext}`;
       logLine(`Mengunggah ${item.file.name} → photos/${filename} ...`);
       const b64=await fileToBase64(item.file);
       await ghPut('photos/'+filename,b64,`Tambah foto ${filename}`);
