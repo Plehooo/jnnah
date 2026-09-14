@@ -5,7 +5,7 @@
   misalnya: "music/lagu-kita.mp3"
   Bisa juga diisi direct link mp3 kalau lagunya di-hosting online.
 */
-window.LOVE_SONG = {
+window.LOVE_SONGS = {
   title: "Judul Lagu",
   artist: "Aditiya × Jannah",
   src: "https://e.top4top.io/m_3909y7snq0.mp3",
