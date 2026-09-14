@@ -2,342 +2,373 @@
 <html lang="id">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="robots" content="noindex, nofollow">
-<title>Kelola Foto — jnnah</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@400;500;600&family=Caveat:wght@500;700&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Admin Galeri — Jannah</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@400;500;600;700&family=Caveat:wght@500;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --paper:#fbf2e8;--paper2:#f3e3d4;
-  --ink:#3a2530;--ink-soft:#6b5560;
-  --rose:#b3506f;--rose-deep:#8a3b56;--rose-pale:#e9c6cf;
-  --line:rgba(58,37,48,.2);--line-soft:rgba(58,37,48,.12);
-  --shadow-soft:0 10px 30px -12px rgba(58,25,35,.25);
-  --ok:#3f7d4a;--err:#b3384f;
+  --bg:#160f16;--bg2:#241521;--card:rgba(255,250,246,.96);--card2:rgba(255,247,241,.88);
+  --ink:#34212b;--soft:#725d68;--rose:#b84f72;--rose2:#8f3654;--gold:#b88b45;
+  --line:rgba(52,33,43,.12);--line2:rgba(255,255,255,.10);--ok:#2d7a49;--err:#b43b55;
+  --shadow:0 30px 80px rgba(0,0,0,.24);--shadow2:0 14px 38px rgba(56,27,39,.15);
 }
 *{box-sizing:border-box}
-body{margin:0;color:var(--ink);background:var(--paper);font-family:'Jost',system-ui,sans-serif;padding:32px 18px 80px}
-.wrap{max-width:640px;margin:0 auto}
-h1{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:500;font-size:2rem;margin:0 0 4px}
-.sub{color:var(--ink-soft);font-size:.9rem;margin:0 0 28px}
-.card{background:#fffaf4;border:1px solid var(--line-soft);border-radius:10px;padding:22px;box-shadow:var(--shadow-soft);margin-bottom:22px}
-.card h2{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:500;font-size:1.3rem;margin:0 0 14px}
-label{display:block;font-size:.8rem;color:var(--ink-soft);margin:12px 0 5px}
+html{scroll-behavior:smooth}
+body{margin:0;color:var(--ink);font-family:'Jost',system-ui,sans-serif;min-height:100vh;background:
+  radial-gradient(circle at 8% 5%,rgba(184,79,114,.32),transparent 30%),
+  radial-gradient(circle at 92% 12%,rgba(184,139,69,.22),transparent 28%),
+  radial-gradient(circle at 50% 100%,rgba(143,54,84,.28),transparent 34%),var(--bg);padding:24px 16px 80px}
+button,input{font:inherit}button{cursor:pointer}
+.shell{width:min(1120px,100%);margin:auto}
+.top{color:#fff;display:flex;align-items:end;justify-content:space-between;gap:18px;padding:10px 4px 24px}
+.brand{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(2.1rem,5vw,3.2rem);line-height:.95}
+.brand em{color:#efa0b9}
+.subtop{margin:9px 0 0;color:rgba(255,255,255,.72);font-size:.9rem;line-height:1.55;max-width:650px}
+.top-badge{flex:none;padding:9px 13px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.07);border-radius:999px;font-size:.72rem;color:rgba(255,255,255,.78);backdrop-filter:blur(10px)}
+.grid{display:grid;grid-template-columns:.9fr 1.1fr;gap:18px;align-items:start}
+.card{background:linear-gradient(180deg,var(--card),var(--card2));border:1px solid rgba(255,255,255,.56);box-shadow:var(--shadow2);border-radius:24px;padding:24px;overflow:hidden}
+.card.full{grid-column:1/-1}
+.card-head{display:flex;align-items:start;justify-content:space-between;gap:14px;margin-bottom:18px}
+h2{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:600;margin:0;font-size:1.8rem;line-height:1}
+.kicker{font-family:'Caveat',cursive;color:var(--rose2);font-size:1.15rem;margin-bottom:5px}
+.muted{color:var(--soft);font-size:.84rem;line-height:1.6}
+.status{color:var(--soft);font-size:.8rem;line-height:1.5;margin-top:10px}
+.badge{display:inline-flex;align-items:center;gap:7px;padding:8px 11px;border-radius:999px;background:rgba(184,79,114,.10);color:var(--rose2);font-size:.74rem;font-weight:600;white-space:nowrap}
+.badge:before{content:"";width:7px;height:7px;background:#59a56d;border-radius:50%;box-shadow:0 0 0 3px rgba(89,165,109,.14)}
+.settings-body{display:none;margin-top:18px}
+.settings-body.open{display:block}
+.repo-locked{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;border:1px solid var(--line);border-radius:16px;background:rgba(184,79,114,.055)}
+.repo-locked strong{display:block;font-size:.88rem}.repo-locked span{display:block;color:var(--soft);font-size:.74rem;margin-top:2px}
+label{display:block;font-size:.76rem;color:var(--soft);margin:14px 0 6px;font-weight:600}
 label:first-child{margin-top:0}
-input[type=text],input[type=password],textarea{
-  width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:6px;background:#fff;
-  font-family:inherit;font-size:.92rem;color:var(--ink)
-}
-.row3{display:grid;grid-template-columns:1fr 1fr 90px;gap:10px}
-details{margin-bottom:4px}
-summary{cursor:pointer;font-size:.85rem;color:var(--rose-deep);user-select:none}
-.hint{font-size:.78rem;color:var(--ink-soft);line-height:1.6;margin-top:8px}
-.hint a{color:var(--rose-deep)}
-.drop{border:1.5px dashed var(--line);border-radius:8px;padding:22px;text-align:center;color:var(--ink-soft);font-size:.88rem;cursor:pointer;transition:.2s}
-.drop.over{border-color:var(--rose);background:rgba(233,198,207,.15)}
-.thumbs{display:grid;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:10px;margin-top:14px}
-.thumb{position:relative;border-radius:6px;overflow:hidden;border:1px solid var(--line-soft);aspect-ratio:4/5;background:#eee}
-.thumb img{width:100%;height:100%;object-fit:cover;display:block}
-.thumb input{position:absolute;left:0;right:0;bottom:0;width:100%;border:0;border-radius:0;padding:5px 6px;font-size:.7rem;background:rgba(255,255,255,.92)}
-.thumb .rm{position:absolute;top:4px;right:4px;width:20px;height:20px;border-radius:50%;background:rgba(40,24,30,.65);color:#fff;border:0;font-size:.75rem;line-height:1;cursor:pointer}
-.btn{display:inline-flex;align-items:center;gap:6px;padding:11px 20px;border-radius:999px;border:1px solid var(--rose);background:var(--rose);color:#fdf1f0;font-size:.9rem;cursor:pointer;transition:.2s}
-.btn:hover{background:var(--rose-deep);border-color:var(--rose-deep)}
-.btn:disabled{opacity:.5;cursor:not-allowed}
-.btn.ghost{background:transparent;color:var(--rose-deep)}
-.actions{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
-.log{margin-top:16px;font-size:.8rem;font-family:ui-monospace,monospace;background:#241722;color:#f0e4e8;border-radius:8px;padding:12px 14px;max-height:220px;overflow:auto;white-space:pre-wrap;display:none}
-.log.show{display:block}
-.log .ok{color:#8fd19e}
-.log .err{color:#f19aab}
-.gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:10px;margin-top:6px}
-.gitem{position:relative;border-radius:6px;overflow:hidden;border:1px solid var(--line-soft);aspect-ratio:4/5;background:#eee}
-.gitem img{width:100%;height:100%;object-fit:cover;display:block}
-.gitem .cap{position:absolute;left:0;right:0;bottom:0;background:rgba(40,24,30,.55);color:#fff;font-size:.65rem;padding:3px 6px;line-height:1.3}
-.gitem .capinput{position:absolute;left:5px;right:5px;bottom:5px;width:calc(100% - 10px);border:0;border-radius:5px;padding:5px 6px;background:rgba(255,255,255,.94);color:var(--ink);font-size:.68rem;z-index:2}
-.gitem .caplabel{position:absolute;left:7px;top:6px;background:rgba(40,24,30,.62);color:#fff;padding:2px 6px;border-radius:99px;font-size:.58rem;z-index:2}
-.gallery{grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:12px}
-.gitem{aspect-ratio:4/5}
-
-.gitem .del{position:absolute;top:4px;right:4px;width:20px;height:20px;border-radius:50%;background:rgba(179,56,79,.85);color:#fff;border:0;font-size:.75rem;cursor:pointer}
-.status{font-size:.8rem;color:var(--ink-soft);margin-top:8px}
+input[type=text],input[type=password]{width:100%;padding:12px 13px;border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--ink);outline:none;transition:.2s}
+input:focus{border-color:rgba(184,79,114,.55);box-shadow:0 0 0 4px rgba(184,79,114,.09)}
+.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:11px}.fullrow{grid-column:1/-1}
+details{margin-top:13px}.hint{font-size:.74rem;color:var(--soft);line-height:1.65;margin-top:10px}.hint a{color:var(--rose2)}
+.btns{display:flex;flex-wrap:wrap;gap:9px;margin-top:15px}
+.btn{border:1px solid var(--rose);background:var(--rose);color:#fff8fa;border-radius:999px;padding:11px 16px;font-size:.8rem;font-weight:600;transition:.2s;box-shadow:0 8px 20px rgba(184,79,114,.18)}
+.btn:hover{transform:translateY(-1px);background:var(--rose2);border-color:var(--rose2)}
+.btn:disabled{opacity:.48;cursor:not-allowed;transform:none}
+.btn.ghost{background:transparent;color:var(--rose2);box-shadow:none}
+.btn.soft{background:#fff;border-color:var(--line);color:var(--ink);box-shadow:none}
+.drop{min-height:210px;border:1.5px dashed rgba(184,79,114,.42);border-radius:20px;background:linear-gradient(145deg,rgba(255,255,255,.8),rgba(184,79,114,.055));display:grid;place-items:center;padding:24px;text-align:center;color:var(--soft);cursor:pointer;transition:.25s}
+.drop:hover,.drop.over{transform:translateY(-1px);border-color:var(--rose);background:linear-gradient(145deg,rgba(255,255,255,.98),rgba(184,79,114,.09))}
+.drop strong{display:block;color:var(--ink);font-size:1rem;margin-bottom:5px}.drop span{display:block;font-size:.78rem;line-height:1.5}
+.queue-top{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-top:15px;font-size:.78rem;color:var(--soft)}
+.thumbs{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-top:10px}
+.thumb{position:relative;background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden;box-shadow:0 8px 22px rgba(56,27,39,.08)}
+.thumb img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block;background:#eee}
+.thumb-body{padding:9px}.thumb input{width:100%;padding:8px 9px;border:1px solid var(--line);border-radius:9px;font-size:.72rem;outline:none}
+.rm{position:absolute;top:8px;right:8px;width:29px;height:29px;border:0;border-radius:50%;background:rgba(29,16,22,.74);color:#fff;font-size:1rem}
+.rm:hover{background:var(--err)}
+.gallery{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin-top:16px}
+.gitem{position:relative;min-width:0;background:#fff;border:1px solid var(--line);border-radius:15px;overflow:hidden;box-shadow:0 8px 20px rgba(56,27,39,.07)}
+.gitem img{display:block;width:100%;aspect-ratio:4/5;object-fit:cover;background:#eee}.gitem.missing img{opacity:.12}.gitem.missing:after{content:'Foto tidak ditemukan';position:absolute;inset:0 0 44px;display:grid;place-items:center;color:var(--soft);font-size:.72rem;background:rgba(255,255,255,.72);pointer-events:none}.gbody{padding:8px}.gbody input{width:100%;padding:8px 9px;border:1px solid var(--line);border-radius:9px;font-size:.7rem}.gnum{position:absolute;top:8px;left:8px;background:rgba(26,15,21,.7);color:#fff;border-radius:999px;padding:3px 7px;font-size:.6rem}
+.del{position:absolute;right:8px;top:8px;width:29px;height:29px;border:0;border-radius:50%;background:rgba(180,59,85,.9);color:#fff;font-size:1rem}.del:hover{background:#8f2942}
+.log{margin-top:14px;font-size:.74rem;font-family:ui-monospace,monospace;background:#1b1118;color:#f4e9ee;border-radius:14px;padding:13px 15px;max-height:220px;overflow:auto;white-space:pre-wrap;display:none}.log.show{display:block}.log .ok{color:#94dda8}.log .err{color:#ff9cb0}
+.empty{padding:38px 20px;text-align:center;border:1px dashed var(--line);border-radius:18px;background:rgba(184,79,114,.035);color:var(--soft);font-size:.82rem;line-height:1.6}
+.footer{color:rgba(255,255,255,.46);text-align:center;font-size:.7rem;margin-top:24px}
+@media(max-width:900px){.grid{grid-template-columns:1fr}.card.full{grid-column:auto}.gallery{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(max-width:620px){body{padding:14px 10px 50px}.top{display:block}.top-badge{display:inline-flex;margin-top:15px}.card{border-radius:19px;padding:17px}.formgrid{grid-template-columns:1fr}.fullrow{grid-column:auto}.gallery{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.thumbs{grid-template-columns:repeat(2,minmax(0,1fr))}.drop{min-height:170px}}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <h1>Kelola foto jnnah</h1>
-  <p class="sub">Tambah / hapus foto galeri langsung dari sini. Foto & captionnya kesimpen ke repo GitHub, terus otomatis ke-deploy lewat workflow Pages yang udah ada — nggak perlu buka github.com.</p>
+<div class="shell">
+  <header class="top">
+    <div>
+      <div class="brand">Jannah <em>×</em> Galeri</div>
+      <p class="subtop">Panel sederhana buat nambah foto, caption, dan hapus foto tanpa bongkar kode. Koleksi di situs utama ikut berubah setelah GitHub Pages selesai deploy.</p>
+    </div>
+    <div class="top-badge">ADMIN · NOINDEX</div>
+  </header>
 
-  <div class="card">
-    <h2>Pengaturan repo</h2>
-    <div class="row3">
-      <div>
-        <label>Username / org GitHub</label>
-        <input type="text" id="owner" placeholder="mis. aditiya">
+  <main class="grid">
+    <section class="card">
+      <div class="card-head">
+        <div><div class="kicker">akses repo</div><h2>Pengaturan</h2></div>
+        <div class="badge" id="repoBadge" style="display:none">Tersimpan di perangkat ini</div>
       </div>
-      <div>
-        <label>Nama repo</label>
-        <input type="text" id="repo" placeholder="mis. jnnah-main">
-      </div>
-      <div>
-        <label>Branch</label>
-        <input type="text" id="branch" value="main">
-      </div>
-    </div>
-    <label>Personal access token (Contents: Read and write, khusus repo ini)</label>
-    <input type="password" id="token" placeholder="ghp_... atau github_pat_...">
-    <details>
-      <summary>Cara bikin token (sekali aja, ±1 menit)</summary>
-      <div class="hint">
-        1. Buka <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">github.com/settings/personal-access-tokens/new</a><br>
-        2. Repository access → pilih "Only select repositories" → pilih repo ini saja.<br>
-        3. Permissions → Repository permissions → "Contents" → set ke "Read and write".<br>
-        4. Generate token, copy, tempel di kolom di atas.<br>
-        Token cuma disimpan di browser kamu sendiri (localStorage), nggak dikirim ke mana pun selain langsung ke GitHub. Jangan sebarkan link halaman ini ke orang lain selama token masih ketempel.
-      </div>
-    </details>
-    <div class="actions">
-      <button class="btn ghost" id="saveSettings">Simpan pengaturan</button>
-      <button class="btn ghost" id="testConn">Tes koneksi</button>
-    </div>
-    <div class="status" id="settingsStatus"></div>
-  </div>
 
-  <div class="card">
-    <h2>Tambah foto</h2>
-    <div class="drop" id="drop">Klik atau seret foto ke sini — bisa puluhan foto sekaligus</div>
-    <input type="file" id="fileInput" accept="image/*" multiple hidden>
-    <div class="thumbs" id="thumbs"></div>
-    <div class="actions">
-      <button class="btn" id="uploadBtn" disabled>Unggah ke galeri</button>
-    </div>
-    <div class="log" id="log"></div>
-  </div>
+      <div class="repo-locked" id="repoLocked" style="display:none">
+        <div><strong>Repository terhubung</strong><span>Detail username, repo, branch, dan token disembunyikan dari tampilan.</span></div>
+        <button class="btn soft" id="editSettings">Ubah</button>
+      </div>
 
-  <div class="card">
-    <h2>Foto yang sudah ada</h2>
-    <div class="status" id="galleryStatus">Isi pengaturan repo di atas dulu, lalu klik "Tes koneksi".</div>
-    <div class="gallery" id="gallery"></div>
-    <div class="actions" id="galleryActions" style="display:none">
-      <button class="btn" id="saveCaptions">Simpan semua caption</button>
-    </div>
-    <div class="status" id="captionStatus"></div>
-  </div>
+      <div class="settings-body" id="settingsBody">
+        <div class="formgrid">
+          <div><label for="owner">Username / org GitHub</label><input type="text" id="owner" autocomplete="off" placeholder="mis. aditiya"></div>
+          <div><label for="repo">Nama repo</label><input type="text" id="repo" autocomplete="off" placeholder="mis. jnnah-main"></div>
+          <div><label for="branch">Branch</label><input type="text" id="branch" value="main" autocomplete="off"></div>
+          <div><label for="token">Personal access token</label><input type="password" id="token" autocomplete="off" placeholder="github_pat_..." spellcheck="false"></div>
+        </div>
+        <details>
+          <summary>Cara bikin token</summary>
+          <div class="hint">Pakai fine-grained token dengan akses <b>Contents: Read and write</b> hanya untuk repo ini. Token disimpan di localStorage browser agar admin bisa dipakai lagi; token tidak ditampilkan setelah pengaturan disimpan. Untuk keamanan maksimum, jangan pakai perangkat bersama dan jangan bagikan halaman admin.</div>
+        </details>
+        <div class="btns">
+          <button class="btn" id="saveSettings">Simpan & sembunyikan</button>
+          <button class="btn ghost" id="testConn">Tes koneksi</button>
+        </div>
+      </div>
+      <div class="status" id="settingsStatus">Belum ada repository yang disimpan.</div>
+    </section>
+
+    <section class="card">
+      <div class="card-head">
+        <div><div class="kicker">input foto</div><h2>Tambah ke album</h2></div>
+        <div class="badge" id="queueBadge">0 foto</div>
+      </div>
+      <div class="drop" id="drop">
+        <div><strong>Klik atau seret foto ke sini</strong><span>Bisa pilih banyak foto sekaligus. Setelah muncul di antrean, isi caption lalu tekan proses.</span></div>
+      </div>
+      <input type="file" id="fileInput" accept="image/*" multiple hidden>
+      <div class="queue-top"><span id="queueHint">Belum ada foto di antrean.</span><button class="btn soft" id="clearQueue" disabled>Kosongkan</button></div>
+      <div class="thumbs" id="thumbs"></div>
+      <div class="btns"><button class="btn" id="uploadBtn" disabled>Proses & masuk ke galeri</button></div>
+      <div class="log" id="log"></div>
+    </section>
+
+    <section class="card full">
+      <div class="card-head">
+        <div><div class="kicker">koleksi aktif</div><h2>Foto yang sudah masuk</h2></div>
+        <div class="badge" id="galleryCount">0 foto</div>
+      </div>
+      <div class="status" id="galleryStatus">Hubungkan repository dulu untuk membaca koleksi.</div>
+      <div class="gallery" id="gallery"></div>
+      <div class="btns" id="galleryActions" style="display:none"><button class="btn" id="saveCaptions">Simpan semua caption</button></div>
+      <div class="status" id="captionStatus"></div>
+    </section>
+  </main>
+  <div class="footer">Data foto & caption dikelola lewat GitHub Contents API.</div>
 </div>
 
 <script>
 const $=s=>document.querySelector(s);
 const settingsFields=['owner','repo','branch','token'];
+let queue=[];
 
 function loadSettings(){
   try{
     const s=JSON.parse(localStorage.getItem('jnnah_admin')||'{}');
-    settingsFields.forEach(k=>{ if(s[k]) $('#'+k).value=s[k]; });
-  }catch(e){}
+    settingsFields.forEach(k=>{if(s[k]) $('#'+k).value=s[k]});
+    return !!(s.owner&&s.repo&&s.token);
+  }catch(e){return false}
 }
-function saveSettings(){
-  const s={};
-  settingsFields.forEach(k=>s[k]=$('#'+k).value.trim());
-  localStorage.setItem('jnnah_admin',JSON.stringify(s));
-  $('#settingsStatus').textContent='Pengaturan tersimpan di browser ini.';
-}
-loadSettings();
-$('#saveSettings').addEventListener('click',saveSettings);
-
 function cfg(){
   return {owner:$('#owner').value.trim(),repo:$('#repo').value.trim(),branch:$('#branch').value.trim()||'main',token:$('#token').value.trim()};
 }
-function apiHeaders(token){
-  return {Authorization:'Bearer '+token,Accept:'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'};
+function hasConfig(){const c=cfg();return !!(c.owner&&c.repo&&c.token)}
+function applySettingsView(hide=true){
+  const body=$('#settingsBody'),locked=$('#repoLocked'),badge=$('#repoBadge');
+  if(hide&&hasConfig()){
+    body.classList.remove('open');locked.style.display='flex';badge.style.display='inline-flex';
+    $('#settingsStatus').textContent='Repository tersimpan. Detail akses disembunyikan.';
+  }else{
+    body.classList.add('open');locked.style.display='none';badge.style.display='none';
+  }
 }
+function saveSettings(){
+  const c=cfg();
+  if(!c.owner||!c.repo||!c.token){$('#settingsStatus').textContent='Lengkapi username/org, repo, dan token dulu.';applySettingsView(false);return false}
+  localStorage.setItem('jnnah_admin',JSON.stringify(c));
+  applySettingsView(true);
+  return true;
+}
+
+const hadConfig=loadSettings();
+applySettingsView(hadConfig);
+if(hadConfig) renderGallery();
+$('#saveSettings').addEventListener('click',()=>{if(saveSettings()) renderGallery()});
+$('#editSettings').addEventListener('click',()=>applySettingsView(false));
+
+function apiHeaders(token){return {Authorization:'Bearer '+token,Accept:'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'}}
 async function ghGet(path){
   const c=cfg();
-  const r=await fetch(`https://api.github.com/repos/${c.owner}/${c.repo}/contents/${path}?ref=${encodeURIComponent(c.branch)}`,{headers:apiHeaders(c.token)});
+  const r=await fetch(`https://api.github.com/repos/${encodeURIComponent(c.owner)}/${encodeURIComponent(c.repo)}/contents/${path}?ref=${encodeURIComponent(c.branch)}`,{headers:apiHeaders(c.token),cache:'no-store'});
   if(!r.ok) throw new Error(`GET ${path} gagal (${r.status})`);
   return r.json();
 }
 async function ghPut(path,contentBase64,message,sha){
   const c=cfg();
-  const body={message,content:contentBase64,branch:c.branch};
-  if(sha) body.sha=sha;
-  const r=await fetch(`https://api.github.com/repos/${c.owner}/${c.repo}/contents/${path}`,{
-    method:'PUT',headers:{...apiHeaders(c.token),'Content-Type':'application/json'},body:JSON.stringify(body)
-  });
-  if(!r.ok){ const t=await r.text(); throw new Error(`PUT ${path} gagal (${r.status}): ${t.slice(0,200)}`); }
+  const body={message,content:contentBase64,branch:c.branch}; if(sha) body.sha=sha;
+  const r=await fetch(`https://api.github.com/repos/${encodeURIComponent(c.owner)}/${encodeURIComponent(c.repo)}/contents/${path}`,{method:'PUT',headers:{...apiHeaders(c.token),'Content-Type':'application/json'},body:JSON.stringify(body)});
+  if(!r.ok){const t=await r.text();throw new Error(`PUT ${path} gagal (${r.status}): ${t.slice(0,240)}`)}
   return r.json();
 }
 async function ghDelete(path,message,sha){
   const c=cfg();
-  const r=await fetch(`https://api.github.com/repos/${c.owner}/${c.repo}/contents/${path}`,{
-    method:'DELETE',headers:{...apiHeaders(c.token),'Content-Type':'application/json'},
-    body:JSON.stringify({message,sha,branch:c.branch})
-  });
-  if(!r.ok){ const t=await r.text(); throw new Error(`DELETE ${path} gagal (${r.status}): ${t.slice(0,200)}`); }
+  const r=await fetch(`https://api.github.com/repos/${encodeURIComponent(c.owner)}/${encodeURIComponent(c.repo)}/contents/${path}`,{method:'DELETE',headers:{...apiHeaders(c.token),'Content-Type':'application/json'},body:JSON.stringify({message,sha,branch:c.branch})});
+  if(!r.ok){const t=await r.text();throw new Error(`DELETE ${path} gagal (${r.status}): ${t.slice(0,240)}`)}
   return r.json();
 }
-function b64FromUnicode(str){
-  return btoa(unescape(encodeURIComponent(str)));
-}
-function utf8Decode(base64){
-  return decodeURIComponent(escape(atob(base64)));
-}
-
+function b64(str){return btoa(unescape(encodeURIComponent(str)))}
+function decode64(str){return decodeURIComponent(escape(atob(String(str).replace(/\n/g,''))))}
 async function fetchPhotosJson(){
   const res=await ghGet('photos.json');
-  const list=JSON.parse(utf8Decode(res.content.replace(/\n/g,'')));
+  const raw=decode64(res.content).trim();
+  let list=JSON.parse(raw);
+  if(!Array.isArray(list)) list=[];
+  list=list.filter(p=>p && typeof p.file==='string' && p.file.trim()).map(p=>({file:p.file.trim(),caption:String(p.caption||'')}));
   return {list,sha:res.sha};
+}
+function safe(v){return String(v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;')}
+function asset(file){return 'photos/'+String(file).split('/').map(encodeURIComponent).join('/')}
+
+async function onDeletePhoto(e){
+  const button=e.currentTarget;
+  const item=button.closest('.gitem');
+  const file=item?.dataset.file||'';
+  if(!file)return;
+  const currentCaption=item.querySelector('.capinput')?.value?.trim()||'';
+  if(!confirm(`Hapus foto ini${currentCaption?` — ${currentCaption}`:''}?\n\nFoto akan dihapus dari galeri.`))return;
+  button.disabled=true;
+  item.style.opacity='.55';
+  const status=$('#captionStatus');
+  try{
+    const {list,sha}=await fetchPhotosJson();
+    const next=list.filter(p=>p.file!==file);
+    if(next.length===list.length){
+      item.remove();
+      status.textContent='Foto sudah tidak ada di daftar galeri.';
+      return;
+    }
+    // Update photos.json first so a failed file deletion cannot leave a broken gallery link.
+    await ghPut('photos.json',b64(JSON.stringify(next,null,2)+'\n'),`Hapus foto ${file}`,sha);
+    try{
+      const meta=await ghGet('photos/'+file);
+      await ghDelete('photos/'+file,`Hapus file foto ${file}`,meta.sha);
+      status.textContent='✓ Foto dihapus dari galeri dan repo.';
+    }catch(fileErr){
+      if(String(fileErr.message).includes('(404)')){
+        status.textContent='✓ Foto dihapus dari galeri. File fisiknya sudah tidak ada.';
+      }else{
+        status.textContent='✓ Foto sudah hilang dari galeri. Pembersihan file repo gagal: '+fileErr.message;
+      }
+    }
+    await renderGallery();
+  }catch(err){
+    item.style.opacity='';
+    button.disabled=false;
+    status.textContent='✗ Gagal menghapus foto: '+err.message;
+  }
 }
 
 async function renderGallery(){
-  const galEl=$('#gallery'),statusEl=$('#galleryStatus'),actions=$('#galleryActions');
+  const gal=$('#gallery');
   try{
     const {list}=await fetchPhotosJson();
-    statusEl.textContent=`${list.length} foto di galeri — bisa terus ditambah tanpa batas jumlah dari sisi halaman.`;
-    actions.style.display=list.length?'flex':'none';
-    galEl.innerHTML=list.map((p,i)=>{
-      const safeFile=String(p.file).replace(/\\/g,'/').replace(/</g,'&lt;').replace(/"/g,'&quot;');
-      return `<div class="gitem" data-file="${safeFile}" data-idx="${i}">`+
-        `<img src="photos/${encodeURIComponent(p.file)}" loading="lazy" onerror="this.style.opacity=.35">`+
-        `<div class="caplabel">#${i+1}</div>`+
-        `<input class="capinput" data-i="${i}" value="${(p.caption||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;')}" placeholder="Tulis caption..." maxlength="140">`+
-        `<button class="del" title="Hapus foto">×</button></div>`;
+    $('#galleryCount').textContent=`${list.length} foto`;
+    $('#galleryStatus').textContent=list.length?`${list.length} foto aktif. Klik caption untuk mengubah, tombol merah untuk menghapus.`:'Album masih kosong.';
+    $('#galleryActions').style.display=list.length?'flex':'none';
+    if(!list.length){gal.innerHTML='<div class="empty">Belum ada foto. Tambahkan dari panel <b>Tambah ke album</b> di atas.</div>';return}
+    gal.innerHTML=list.map((p,i)=>{
+      const file=safe(p.file||'');
+      return `<div class="gitem" data-file="${file}">`+
+        `<img src="${asset(p.file)}" alt="${safe(p.caption||'Foto '+(i+1))}" loading="lazy" decoding="async">`+
+        `<span class="gnum">#${i+1}</span><button class="del" title="Hapus foto">×</button>`+
+        `<div class="gbody"><input class="capinput" data-i="${i}" value="${safe(p.caption||'')}" maxlength="140" placeholder="Tulis caption..."></div></div>`;
     }).join('');
-    galEl.querySelectorAll('.del').forEach(btn=>btn.addEventListener('click',onDeletePhoto));
+    gal.querySelectorAll('.del').forEach(b=>b.addEventListener('click',onDeletePhoto));
+    gal.querySelectorAll('img').forEach(img=>img.addEventListener('error',()=>{
+      const card=img.closest('.gitem');
+      if(card) card.classList.add('missing');
+    },{once:true}));
   }catch(e){
-    statusEl.textContent='Belum konek: '+e.message;
-    galEl.innerHTML=''; actions.style.display='none';
+    $('#galleryCount').textContent='—';$('#galleryStatus').textContent='Belum konek: '+e.message;$('#galleryActions').style.display='none';gal.innerHTML='';
   }
 }
+
+$('#testConn').addEventListener('click',async()=>{
+  if(!saveSettings())return;
+  $('#settingsStatus').textContent='Menghubungkan ke GitHub...';
+  try{await fetchPhotosJson();$('#settingsStatus').textContent='Koneksi berhasil. Pengaturan tetap disembunyikan.';renderGallery()}
+  catch(e){$('#settingsStatus').textContent='Koneksi gagal: '+e.message;applySettingsView(false)}
+});
 
 async function saveAllCaptions(){
   const status=$('#captionStatus');
   try{
     const {list,sha}=await fetchPhotosJson();
-    const inputs=[...$('#gallery').querySelectorAll('.capinput')];
-    inputs.forEach(inp=>{ const i=Number(inp.dataset.i); if(list[i]) list[i].caption=inp.value.trim(); });
-    await ghPut('photos.json',b64FromUnicode(JSON.stringify(list,null,2)+'\n'),'Update caption foto',sha);
-    status.textContent='✓ Semua caption tersimpan. Pages akan deploy ulang otomatis.';
-    renderGallery();
-  }catch(e){ status.textContent='✗ Gagal simpan caption: '+e.message; }
+    $('#gallery').querySelectorAll('.capinput').forEach(inp=>{const i=Number(inp.dataset.i);if(list[i])list[i].caption=inp.value.trim()});
+    await ghPut('photos.json',b64(JSON.stringify(list,null,2)+'\n'),'Update caption foto',sha);
+    status.textContent='✓ Caption tersimpan.';await renderGallery();
+  }catch(e){status.textContent='✗ Gagal simpan caption: '+e.message}
 }
 $('#saveCaptions').addEventListener('click',saveAllCaptions);
 
-$('#testConn').addEventListener('click',async()=>{
-  saveSettings();
-  $('#settingsStatus').textContent='Menghubungkan...';
-  try{
-    await fetchPhotosJson();
-    $('#settingsStatus').textContent='Berhasil konek ke repo ✓';
-    renderGallery();
-  }catch(e){
-    $('#settingsStatus').textContent='Gagal: '+e.message;
-  }
-});
-
-async function onDeletePhoto(e){
-  const item=e.target.closest('.gitem');
-  const file=item.dataset.file;
-  if(!confirm(`Hapus foto "${file}" dari galeri?`)) return;
-  e.target.disabled=true;
-  try{
-    const {list,sha}=await fetchPhotosJson();
-    const idx=list.findIndex(p=>p.file===file);
-    if(idx<0) throw new Error('Foto sudah tidak ada di photos.json');
-    const newList=list.filter((_,i)=>i!==idx);
-    await ghPut('photos.json',b64FromUnicode(JSON.stringify(newList,null,2)+'\\n'),`Hapus foto ${file} dari galeri`,sha);
-    try{
-      const imgMeta=await ghGet('photos/'+file);
-      await ghDelete('photos/'+file,`Hapus file foto ${file}`,imgMeta.sha);
-    }catch(err){ console.warn('File gambar tidak ditemukan:',err); }
-    await renderGallery();
-    $('#captionStatus').textContent=`✓ ${file} dihapus.`;
-  }catch(err){
-    alert('Gagal hapus: '+err.message);
-    e.target.disabled=false;
-  }
+function fileToBase64(file){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(String(r.result).split(',')[1]);r.onerror=()=>rej(new Error('Gagal membaca file '+file.name));r.readAsDataURL(file)})}
+function slug(name){return name.toLowerCase().replace(/\.[^.]+$/,'').replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'').slice(0,42)||'foto'}
+function logLine(text,cls){const el=$('#log');el.classList.add('show');const line=document.createElement('div');if(cls)line.className=cls;line.textContent=text;el.appendChild(line);el.scrollTop=el.scrollHeight}
+function updateQueueUI(){
+  $('#queueBadge').textContent=`${queue.length} foto`;
+  $('#queueHint').textContent=queue.length?`${queue.length} foto siap diproses.`:'Belum ada foto di antrean.';
+  $('#uploadBtn').disabled=!queue.length||!hasConfig();$('#clearQueue').disabled=!queue.length;
 }
-
-// --- upload area ---
-let queue=[]; // {file, caption}
-const drop=$('#drop'),fileInput=$('#fileInput'),thumbsEl=$('#thumbs'),uploadBtn=$('#uploadBtn');
-
-drop.addEventListener('click',()=>fileInput.click());
-drop.addEventListener('dragover',e=>{e.preventDefault();drop.classList.add('over')});
-drop.addEventListener('dragleave',()=>drop.classList.remove('over'));
-drop.addEventListener('drop',e=>{
-  e.preventDefault();drop.classList.remove('over');
-  addFiles(e.dataTransfer.files);
-});
-fileInput.addEventListener('change',()=>{ addFiles(fileInput.files); fileInput.value=''; });
-
 function addFiles(fileList){
-  [...fileList].filter(f=>f.type.startsWith('image/')).forEach(file=>{
+  const files=[...fileList].filter(f=>f && f.type.startsWith('image/'));
+  files.forEach(file=>{
+    if(file.size>12*1024*1024)return;
+    if(queue.some(x=>x.file.name===file.name && x.file.size===file.size && x.file.lastModified===file.lastModified))return;
     queue.push({file,caption:''});
   });
   renderThumbs();
 }
 function renderThumbs(){
-  thumbsEl.innerHTML='';
+  const el=$('#thumbs');el.querySelectorAll('img[data-preview-url]').forEach(img=>URL.revokeObjectURL(img.dataset.previewUrl));
+  el.innerHTML='';
   queue.forEach((item,i)=>{
-    const url=URL.createObjectURL(item.file);
-    const el=document.createElement('div');
-    el.className='thumb';
-    el.innerHTML=`<img src="${url}"><button class="rm" data-i="${i}">×</button><input type="text" data-i="${i}" placeholder="caption" value="${item.caption}">`;
-    thumbsEl.appendChild(el);
+    const card=document.createElement('div');card.className='thumb';
+    const img=document.createElement('img');
+    const previewUrl=URL.createObjectURL(item.file);
+    img.src=previewUrl;img.dataset.previewUrl=previewUrl;img.alt='Preview '+(i+1);
+    const close=document.createElement('button');close.className='rm';close.textContent='×';close.type='button';close.title='Hapus dari antrean';close.addEventListener('click',()=>{queue.splice(i,1);renderThumbs()});
+    const body=document.createElement('div');body.className='thumb-body';
+    const input=document.createElement('input');input.placeholder='Caption (opsional)';input.maxLength=140;input.value=item.caption;input.addEventListener('input',()=>item.caption=input.value);
+    body.appendChild(input);card.append(img,close,body);el.appendChild(card);
   });
-  thumbsEl.querySelectorAll('.rm').forEach(b=>b.addEventListener('click',()=>{ queue.splice(Number(b.dataset.i),1); renderThumbs(); }));
-  thumbsEl.querySelectorAll('input').forEach(inp=>inp.addEventListener('input',()=>{ queue[Number(inp.dataset.i)].caption=inp.value; }));
-  uploadBtn.disabled=queue.length===0;
+  updateQueueUI();
 }
 
-function fileToBase64(file){
-  return new Promise((res,rej)=>{
-    const r=new FileReader();
-    r.onload=()=>res(r.result.split(',')[1]);
-    r.onerror=()=>rej(new Error('Gagal baca file'));
-    r.readAsDataURL(file);
-  });
-}
-function slug(name){
-  return name.toLowerCase().replace(/\.[^.]+$/,'').replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'').slice(0,40);
-}
-function logLine(text,cls){
-  const el=$('#log');
-  el.classList.add('show');
-  const line=document.createElement('div');
-  if(cls) line.className=cls;
-  line.textContent=text;
-  el.appendChild(line);
-  el.scrollTop=el.scrollHeight;
-}
+const drop=$('#drop'),fileInput=$('#fileInput');
+drop.addEventListener('click',()=>fileInput.click());
+drop.addEventListener('dragover',e=>{e.preventDefault();drop.classList.add('over')});
+drop.addEventListener('dragleave',()=>drop.classList.remove('over'));
+drop.addEventListener('drop',e=>{e.preventDefault();drop.classList.remove('over');addFiles(e.dataTransfer.files)});
+fileInput.addEventListener('change',()=>{addFiles(fileInput.files);fileInput.value=''})
+$('#clearQueue').addEventListener('click',()=>{queue=[];renderThumbs()});
 
-uploadBtn.addEventListener('click',async()=>{
-  if(!cfg().token){ alert('Isi & simpan pengaturan repo + token dulu.'); return; }
-  uploadBtn.disabled=true;
-  $('#log').innerHTML='';
+$('#uploadBtn').addEventListener('click',async()=>{
+  if(!hasConfig()){applySettingsView(false);return}
+  if(!queue.length)return;
+  $('#uploadBtn').disabled=true;$('#clearQueue').disabled=true;$('#log').innerHTML='';
+  const uploaded=[];
+  const batch=[...queue];
   try{
     let {list,sha}=await fetchPhotosJson();
-    for(const item of queue){
-      const ext=(item.file.name.match(/\.[a-zA-Z0-9]+$/)||['.jpg'])[0].toLowerCase();
-      const filename=`${Date.now()}-${crypto.randomUUID ? crypto.randomUUID().slice(0,8) : Math.random().toString(36).slice(2,10)}-${slug(item.file.name)||'foto'}${ext}`;
-      logLine(`Mengunggah ${item.file.name} → photos/${filename} ...`);
-      const b64=await fileToBase64(item.file);
-      await ghPut('photos/'+filename,b64,`Tambah foto ${filename}`);
-      list=[...list,{file:filename,caption:item.caption||''}];
-      logLine(`✓ ${item.file.name} terunggah`,'ok');
+    for(const item of batch){
+      const ext=(item.file.name.match(/\.[a-zA-Z0-9]{1,8}$/)||['.jpg'])[0].toLowerCase();
+      const filename=`${Date.now()}-${crypto.randomUUID?crypto.randomUUID().slice(0,8):Math.random().toString(36).slice(2,10)}-${slug(item.file.name)}${ext}`;
+      logLine(`Mengunggah ${item.file.name} …`);
+      await ghPut('photos/'+filename,await fileToBase64(item.file),`Tambah foto ${filename}`);
+      uploaded.push(filename);list.push({file:filename,caption:item.caption.trim()});logLine(`✓ ${item.file.name}`,'ok');
     }
-    const putRes=await ghPut('photos.json',b64FromUnicode(JSON.stringify(list,null,2)+'\n'),`Update photos.json (+${queue.length} foto)`,sha);
-    logLine('✓ photos.json diperbarui — situs akan ter-deploy ulang otomatis dalam ~1 menit.','ok');
-    queue=[];
-    renderThumbs();
-    renderGallery();
+    await ghPut('photos.json',b64(JSON.stringify(list,null,2)+'\n'),`Update photos.json (+${batch.length} foto)`,sha);
+    logLine('✓ Semua foto masuk ke galeri. Pages akan deploy otomatis.','ok');
+    queue=[];renderThumbs();await renderGallery();
   }catch(e){
     logLine('✗ '+e.message,'err');
-  }finally{
-    uploadBtn.disabled=queue.length===0;
-  }
+    if(uploaded.length){
+      logLine('Mencoba membersihkan file yang terunggah sebagian…');
+      for(const file of uploaded){try{const meta=await ghGet('photos/'+file);await ghDelete('photos/'+file,'Cleanup upload gagal',meta.sha)}catch(cleanErr){logLine('! Cleanup gagal: '+file,'err')}}
+    }
+  }finally{updateQueueUI()}
 });
 
-if(cfg().token) renderGallery();
+if(!hadConfig)applySettingsView(false);
+updateQueueUI();
 </script>
 </body>
 </html>
