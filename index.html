@@ -105,11 +105,6 @@ section{padding:96px 0;position:relative}
 .board{position:relative;padding:20px 0 10px}
 .scatter{display:grid;grid-template-columns:repeat(12,1fr);gap:22px 18px}
 .scatter .photo{grid-column:span 4;position:relative;cursor:pointer}
-.scatter .photo:nth-child(1){grid-column:1/6;transform:rotate(-3deg)}
-.scatter .photo:nth-child(2){grid-column:6/9;transform:rotate(2.5deg);margin-top:38px}
-.scatter .photo:nth-child(3){grid-column:9/13;transform:rotate(-1.5deg)}
-.scatter .photo:nth-child(4){grid-column:1/5;transform:rotate(2deg);margin-top:6px}
-.scatter .photo:nth-child(5){grid-column:5/9;transform:rotate(-2.5deg);margin-top:-20px}
 .pol{background:#fffaf4;padding:10px 10px 38px;box-shadow:var(--shadow-soft);transition:transform .35s ease,box-shadow .35s ease;position:relative}
 .photo:hover .pol{transform:translateY(-6px) rotate(0deg) scale(1.02);box-shadow:var(--shadow);z-index:5}
 .pol img{width:100%;aspect-ratio:4/5;object-fit:cover;display:block}
@@ -285,13 +280,7 @@ footer .sign{margin-top:12px;font-family:'Caveat',cursive;color:var(--ink-soft);
       <p>Ditata seperti foto yang ditempel di papan gabus — sedikit miring, apa adanya. Klik salah satu untuk melihatnya lebih besar.</p>
     </div>
     <div class="board reveal">
-      <div class="scatter">
-        <div class="photo" data-full="photos/01.jpg"><div class="pol"><span class="pin"></span><img src="photos/01.jpg" alt="Aditiya dan Jannah" loading="eager"><div class="cap">bersama</div></div></div>
-        <div class="photo" data-full="photos/02.jpg"><div class="pol"><span class="pin"></span><img src="photos/02.jpg" alt="Aditiya dan Jannah" loading="lazy"><div class="cap">momen kecil</div></div></div>
-        <div class="photo" data-full="photos/03.jpg"><div class="pol"><span class="pin"></span><img src="photos/03.jpg" alt="Jannah" loading="lazy"><div class="cap">senyum ini</div></div></div>
-        <div class="photo" data-full="photos/04.jpg"><div class="pol"><span class="pin"></span><img src="photos/04.jpg" alt="Aditiya" loading="lazy"><div class="cap">hari itu</div></div></div>
-        <div class="photo" data-full="photos/05.jpg"><div class="pol"><span class="pin"></span><img src="photos/05.jpg" alt="Aditiya dan Jannah" loading="lazy"><div class="cap">bab favorit</div></div></div>
-      </div>
+      <div class="scatter" id="scatter"></div>
     </div>
   </div>
 </section>
@@ -444,7 +433,34 @@ function burst(n=16){
 }
 $('#heart').addEventListener('click',()=>burst(20));
 
-$$('.photo').forEach(el=>el.addEventListener('click',()=>{$('#lightboxImg').src=el.dataset.full;$('#lightbox').classList.add('open')}));
+function bindPhotoClicks(){
+  $$('.photo').forEach(el=>el.addEventListener('click',()=>{$('#lightboxImg').src=el.dataset.full;$('#lightbox').classList.add('open')}));
+}
+
+/* Galeri: tambahin foto cukup lewat photos.json + taruh filenya di folder photos/, tidak perlu edit HTML/CSS.
+   Posisi & rotasi tiap foto dibuat otomatis (pola diulang tiap 6 foto) supaya layout "papan gabus" tetap
+   rapi-berantakan meskipun jumlah fotonya nambah. */
+const scatterLayout=[
+  {col:'1/6',rot:-3,mt:0},
+  {col:'6/9',rot:2.5,mt:38},
+  {col:'9/13',rot:-1.5,mt:0},
+  {col:'1/5',rot:2,mt:6},
+  {col:'5/9',rot:-2.5,mt:-20},
+  {col:'9/13',rot:3,mt:16}
+];
+
+fetch('photos.json').then(r=>r.json()).then(list=>{
+  const scatter=$('#scatter');
+  scatter.innerHTML=list.map((p,i)=>{
+    const L=scatterLayout[i%scatterLayout.length];
+    const cap=(p.caption||'').replace(/</g,'&lt;');
+    const alt=cap||'Aditiya dan Jannah';
+    return `<div class="photo" data-full="photos/${p.file}" style="grid-column:${L.col};transform:rotate(${L.rot}deg);margin-top:${L.mt}px">`
+      +`<div class="pol"><span class="pin"></span><img src="photos/${p.file}" alt="${alt}" loading="${i<2?'eager':'lazy'}"><div class="cap">${cap}</div></div></div>`;
+  }).join('');
+  bindPhotoClicks();
+}).catch(()=>bindPhotoClicks());
+
 function closeLight(){$('#lightbox').classList.remove('open')}
 $('#closeLightbox').addEventListener('click',closeLight);
 $('#lightbox').addEventListener('click',e=>{if(e.target.id==='lightbox')closeLight()});
