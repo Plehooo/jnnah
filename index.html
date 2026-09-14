@@ -6,6 +6,17 @@
 <meta name="theme-color" content="#f6e9df">
 <meta name="description" content="Aditiya × Jannah — sebuah buku catatan kecil, dibuat dari foto, cerita, dan lagu.">
 <title>Aditiya × Jannah — Catatan Kecil Kita</title>
+<script>
+/* jalan paling awal, sebelum tampilan digambar — supaya kalau sebelumnya sudah pernah
+   "Buka halamannya", gerbang tidak sempat kelihatan lagi tiap kali tab/browser dimuat ulang */
+(function(){
+  try{
+    if(localStorage.getItem('jnnah_gate_opened')==='1'){
+      document.documentElement.classList.add('gate-skip');
+    }
+  }catch(e){}
+})();
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@400;500;600&family=Caveat:wght@500;700&display=swap" rel="stylesheet">
@@ -49,6 +60,8 @@ button{cursor:pointer;background:none;border:none}
   transition:opacity .9s ease, visibility .9s ease;
 }
 .gate.hide{opacity:0;visibility:hidden}
+html.gate-skip .gate{display:none}
+html.gate-skip body.locked{overflow:visible;height:auto}
 .seal-wrap{display:flex;flex-direction:column;align-items:center;text-align:center;max-width:460px}
 .seal{width:96px;height:96px;border-radius:50%;background:radial-gradient(circle at 35% 30%, var(--rose) 0%, var(--rose-deep) 70%);
   display:grid;place-items:center;box-shadow:0 14px 30px -8px rgba(138,59,86,.55), inset 0 -6px 10px rgba(0,0,0,.2);
@@ -86,6 +99,71 @@ button{cursor:pointer;background:none;border:none}
 .hero-copy{max-width:480px;color:var(--ink-soft);font-size:1.04rem;line-height:1.75;margin-top:24px}
 .hero-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px;align-items:center}
 .hero-note{margin-top:20px;color:var(--ink-soft);font-size:.78rem;font-style:italic;opacity:.8}
+
+/* ambient floating hearts — bikin halaman terasa hidup di background */
+.ambient{position:fixed;inset:0;z-index:2;pointer-events:none;overflow:hidden}
+.ambient span{position:absolute;bottom:-10vh;color:var(--rose);opacity:0;animation:floatUp linear infinite;filter:drop-shadow(0 2px 4px rgba(138,59,86,.18))}
+.ambient span:before{content:"♥"}
+.ambient span:nth-child(1){left:5%;font-size:13px;animation-duration:24s;animation-delay:0s}
+.ambient span:nth-child(2){left:17%;font-size:9px;animation-duration:29s;animation-delay:4s}
+.ambient span:nth-child(3){left:31%;font-size:15px;animation-duration:33s;animation-delay:8s}
+.ambient span:nth-child(4){left:47%;font-size:10px;animation-duration:21s;animation-delay:1.5s}
+.ambient span:nth-child(5){left:61%;font-size:14px;animation-duration:31s;animation-delay:11s}
+.ambient span:nth-child(6){left:74%;font-size:8px;animation-duration:26s;animation-delay:6s}
+.ambient span:nth-child(7){left:85%;font-size:16px;animation-duration:35s;animation-delay:14s}
+.ambient span:nth-child(8){left:93%;font-size:9px;animation-duration:19s;animation-delay:2.5s}
+@keyframes floatUp{
+  0%{transform:translateY(0) rotate(0deg) scale(.7);opacity:0}
+  10%{opacity:.3}
+  50%{transform:translateY(-55vh) rotate(10deg) scale(1)}
+  90%{opacity:.22}
+  100%{transform:translateY(-108vh) rotate(-8deg) scale(.8);opacity:0}
+}
+@media (prefers-reduced-motion: reduce){.ambient{display:none}}
+
+/* ===== waktu jadian / love counter ===== */
+.counter-section{padding:88px 0 96px;position:relative;overflow:hidden}
+.counter-section:before{content:"";position:absolute;inset:0;background:
+  radial-gradient(ellipse 70% 55% at 50% 0%, rgba(179,80,111,.11), transparent 65%),
+  radial-gradient(ellipse 50% 40% at 100% 100%, rgba(175,128,56,.08), transparent 60%);
+  pointer-events:none}
+.counter-head{text-align:center;max-width:640px;margin:0 auto 44px;position:relative;z-index:2}
+.counter-head .kicker{font-family:'Caveat',cursive;font-size:1.35rem;color:var(--rose-deep)}
+.counter-head h2{margin:6px 0 12px;font-size:clamp(2.2rem,5vw,3.2rem);font-weight:500;line-height:1.08;letter-spacing:-.01em}
+.counter-head h2 em{font-style:italic;color:var(--rose)}
+.counter-head p{color:var(--ink-soft);line-height:1.7;font-size:.97rem}
+.counter-date{display:inline-flex;align-items:center;gap:9px;margin-top:16px;padding:9px 18px;border-radius:999px;
+  border:1px solid rgba(179,80,111,.28);background:rgba(255,250,245,.75);backdrop-filter:blur(4px);
+  font-family:'Caveat',cursive;font-size:1.1rem;color:var(--rose-deep);box-shadow:var(--shadow-soft)}
+.counter-heart{display:inline-block;animation:heartbeat 1.35s ease-in-out infinite;transform-origin:center}
+@keyframes heartbeat{0%,100%{transform:scale(1)}15%{transform:scale(1.28)}30%{transform:scale(1)}45%{transform:scale(1.22)}60%{transform:scale(1)}}
+.counter-grid{position:relative;z-index:2;display:grid;grid-template-columns:repeat(6,1fr);gap:16px;max-width:940px;margin:0 auto}
+.counter-card{position:relative;padding:28px 10px 22px;text-align:center;border-radius:18px;
+  background:linear-gradient(160deg,#fffcf8,#f6e6da 88%);border:1px solid rgba(58,37,48,.1);
+  box-shadow:0 18px 36px -22px rgba(58,25,35,.42);overflow:hidden;transition:transform .35s cubic-bezier(.2,.75,.25,1),box-shadow .35s ease}
+.counter-card:hover{transform:translateY(-5px) scale(1.02);box-shadow:0 24px 46px -20px rgba(58,25,35,.52)}
+.counter-card:before{content:"";position:absolute;left:50%;top:-34px;width:90px;height:90px;transform:translateX(-50%);
+  border-radius:50%;background:radial-gradient(circle,rgba(179,80,111,.2),transparent 70%)}
+.counter-num{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:600;
+  font-size:clamp(1.85rem,4.2vw,2.7rem);color:var(--rose-deep);line-height:1;display:inline-block;min-width:1.4ch;
+  transition:transform .2s ease}
+.counter-num.tick{animation:tickPop .4s ease}
+@keyframes tickPop{0%{transform:translateY(-6px);opacity:.4}100%{transform:translateY(0);opacity:1}}
+.counter-label{margin-top:9px;font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft)}
+.counter-sub{position:relative;z-index:2;text-align:center;margin-top:28px;color:var(--ink-soft);font-size:.86rem;font-style:italic}
+@media(max-width:920px){.counter-grid{grid-template-columns:repeat(3,1fr);gap:14px 12px}}
+@media(max-width:560px){
+  .counter-section{padding:66px 0 74px}
+  .counter-grid{grid-template-columns:repeat(3,1fr);gap:10px}
+  .counter-card{padding:18px 6px 15px;border-radius:14px}
+  .counter-num{font-size:1.5rem}
+  .counter-label{font-size:.58rem;letter-spacing:.06em}
+  .counter-date{font-size:.98rem;padding:8px 14px}
+}
+
+.polaroid-wrap{animation:bob 6.5s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-9px) rotate(.6deg)}}
+@media (prefers-reduced-motion: reduce){.polaroid-wrap{animation:none}}
 
 .polaroid{background:#fffaf4;padding:14px 14px 46px;border-radius:3px;box-shadow:var(--shadow);transform:rotate(3deg)}
 .polaroid img{display:block;width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:1px}
@@ -166,7 +244,7 @@ section{padding:96px 0;position:relative}
 .vinyl{width:230px;height:230px;border-radius:50%;position:relative;
   background:repeating-radial-gradient(circle at center,#241722 0,#241722 2px,#2d1c29 3px,#2d1c29 4px);
   box-shadow:var(--shadow);display:grid;place-items:center}
-.vinyl.spin{animation:spin 5s linear infinite}
+.vinyl.spin{animation:spin 5s linear infinite;box-shadow:var(--shadow),0 0 46px -6px rgba(179,80,111,.45)}
 @keyframes spin{to{transform:rotate(360deg)}}
 .vinyl .label{width:88px;height:88px;border-radius:50%;background:radial-gradient(circle at 35% 30%,var(--rose),var(--rose-deep));
   display:grid;place-items:center;box-shadow:inset 0 0 0 1px rgba(255,255,255,.15)}
@@ -249,6 +327,7 @@ footer .sign{margin-top:12px;font-family:'Caveat',cursive;color:var(--ink-soft);
 </head>
 <body class="locked">
 <div class="grain"></div>
+<div class="ambient" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
 
 <div class="gate" id="gate">
   <div class="seal-wrap">
@@ -266,6 +345,7 @@ footer .sign{margin-top:12px;font-family:'Caveat',cursive;color:var(--ink-soft);
     <div class="brand">Aditiya & Jannah</div>
     <nav class="nav">
       <a href="#home">Beranda</a>
+      <a href="#counter">Waktu Kita</a>
       <a href="#gallery">Foto</a>
       <a href="#story">Cerita</a>
       <a href="#words">Kata</a>
@@ -299,6 +379,28 @@ footer .sign{margin-top:12px;font-family:'Caveat',cursive;color:var(--ink-soft);
         <div class="cap" id="heroCaption">bab satu, foto favorit</div>
       </div>
     </div>
+  </div>
+</section>
+
+<div class="container"><div class="divider"></div></div>
+
+<section class="counter-section" id="counter">
+  <div class="container">
+    <div class="counter-head reveal">
+      <div class="kicker serif">sudah berapa lama, ya?</div>
+      <h2 class="serif">Waktu yang <em>terus berjalan,</em><br>sejak hari itu.</h2>
+      <p>Dihitung sejak jadian — detik demi detik, supaya kelihatan betapa banyak waktu yang sudah kita lewati berdua, dan yang masih akan terus bertambah.</p>
+      <div class="counter-date"><span class="counter-heart">♥</span> <span id="jadianLabel">09 Mei 2026</span></div>
+    </div>
+    <div class="counter-grid reveal">
+      <div class="counter-card"><div class="counter-num" id="cYears">0</div><div class="counter-label">Tahun</div></div>
+      <div class="counter-card"><div class="counter-num" id="cMonths">0</div><div class="counter-label">Bulan</div></div>
+      <div class="counter-card"><div class="counter-num" id="cDays">0</div><div class="counter-label">Hari</div></div>
+      <div class="counter-card"><div class="counter-num" id="cHours">00</div><div class="counter-label">Jam</div></div>
+      <div class="counter-card"><div class="counter-num" id="cMinutes">00</div><div class="counter-label">Menit</div></div>
+      <div class="counter-card"><div class="counter-num" id="cSeconds">00</div><div class="counter-label">Detik</div></div>
+    </div>
+    <div class="counter-sub reveal">dan akan terus bertambah, selama kita masih terus mencoba. 🤍</div>
   </div>
 </section>
 
@@ -446,7 +548,45 @@ $('#enter').addEventListener('click',()=>{
   gate.classList.add('hide');
   // Siapkan track pertama saja. Audio TIDAK autoplay.
   if(window.LOVE_SONGS?.length && !LOVE_SONGS[0].src.includes('PASTE-')) loadSong(0,false);
+  try{localStorage.setItem('jnnah_gate_opened','1')}catch(e){}
 });
+
+/* jaring pengaman: kalau tandanya sudah ada tapi karena suatu hal gate masih kebuka,
+   pastikan tetap langsung terbuka juga lewat sini (selain lewat gate-skip di <head>) */
+try{
+  if(localStorage.getItem('jnnah_gate_opened')==='1'){
+    document.body.classList.remove('locked');
+    gate.classList.add('hide');
+    if(window.LOVE_SONGS?.length && !LOVE_SONGS[0].src.includes('PASTE-')) loadSong(0,false);
+  }
+}catch(e){}
+
+/* simpan & pulihkan posisi scroll, supaya pindah tab/app/desktop lalu balik lagi
+   tidak selalu kembali ke paling atas halaman */
+try{
+  addEventListener('scroll',()=>{
+    if(!document.body.classList.contains('locked')) sessionStorage.setItem('jnnah_scrollY',String(window.scrollY));
+  },{passive:true});
+  addEventListener('load',()=>{
+    const savedY=sessionStorage.getItem('jnnah_scrollY');
+    if(savedY && localStorage.getItem('jnnah_gate_opened')==='1'){
+      setTimeout(()=>window.scrollTo(0,parseInt(savedY,10)||0),60);
+    }
+  });
+  addEventListener('visibilitychange',()=>{
+    if(document.visibilityState==='hidden') sessionStorage.setItem('jnnah_scrollY',String(window.scrollY));
+  });
+  /* dipicu tiap kali halaman ini ditampilkan lagi — termasuk saat balik dari link/tab lain
+     lewat tombol back/forward browser — supaya tidak pernah balik ke gerbang awal */
+  addEventListener('pageshow',()=>{
+    if(localStorage.getItem('jnnah_gate_opened')==='1'){
+      document.body.classList.remove('locked');
+      gate.classList.add('hide');
+      const savedY=sessionStorage.getItem('jnnah_scrollY');
+      if(savedY) window.scrollTo(0,parseInt(savedY,10)||0);
+    }
+  });
+}catch(e){}
 
 function burst(n=16){
   const layer=document.createElement('div');
@@ -601,6 +741,40 @@ function showToast(t){
 
 const ro=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');ro.unobserve(e.target)}}),{threshold:.12});
 $$('.reveal').forEach(e=>ro.observe(e));
+
+/* ===== waktu jadian: 09 Mei 2026, dihitung tahun/bulan/hari/jam/menit/detik secara live ===== */
+const JADIAN=new Date(2026,4,9,0,0,0); // 09-05-2026
+function two(n){return String(n).padStart(2,'0')}
+function setNum(id,val){
+  const el=$(id);
+  if(el.textContent!==String(val)){el.textContent=val;el.classList.remove('tick');void el.offsetWidth;el.classList.add('tick')}
+}
+function updateCounter(){
+  const now=new Date();
+  let years=now.getFullYear()-JADIAN.getFullYear();
+  let months=now.getMonth()-JADIAN.getMonth();
+  let days=now.getDate()-JADIAN.getDate();
+  let hours=now.getHours()-JADIAN.getHours();
+  let minutes=now.getMinutes()-JADIAN.getMinutes();
+  let seconds=now.getSeconds()-JADIAN.getSeconds();
+  if(seconds<0){seconds+=60;minutes--}
+  if(minutes<0){minutes+=60;hours--}
+  if(hours<0){hours+=24;days--}
+  if(days<0){
+    const prevMonthLastDay=new Date(now.getFullYear(),now.getMonth(),0).getDate();
+    days+=prevMonthLastDay;months--
+  }
+  if(months<0){months+=12;years--}
+  if(now<JADIAN){years=months=days=hours=minutes=seconds=0}
+  setNum('#cYears',years);
+  setNum('#cMonths',months);
+  setNum('#cDays',days);
+  setNum('#cHours',two(hours));
+  setNum('#cMinutes',two(minutes));
+  setNum('#cSeconds',two(seconds));
+}
+updateCounter();
+setInterval(updateCounter,1000);
 </script>
 </body>
 </html>
