@@ -1,7 +1,18 @@
 [
-  {"file":"01.jpg","caption":"bersama"},
-  {"file":"02.jpg","caption":"momen kecil"},
-  {"file":"03.jpg","caption":"senyum ini"},
-  {"file":"04.jpg","caption":"hari itu"},
-  {"file":"05.jpg","caption":"bab favorit"}
-]
+  {
+    "file": "01.jpg",
+    "caption": "bersama"
+  },
+  {
+    "file": "02.jpg",
+    "caption": "momen kecil"
+  },
+  {
+    "file": "04.jpg",
+    "caption": "hari itu"
+  },
+  {
+    "file": "05.jpg",
+    "caption": "bab favorit"
+  }
+]\n
